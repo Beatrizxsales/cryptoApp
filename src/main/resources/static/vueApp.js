@@ -40,7 +40,7 @@ const mainContainer = {
 
             this.canSeeTransations = true
 
-            axios.get(baseUrl + name)
+            axios.get(baseUrl + nome)
                 .then(response => {
                     response.data.forEach(item => {
                         this.transations.data.push({
@@ -77,7 +77,7 @@ const mainContainer = {
                     quantidade: this.formMoeda.quantidade
                 }
 
-                axios.post(baseUrl, coin)
+                axios.post(baseUrl, moeda)
                     .then(function (response) {
                         toastr.success('Nova transação cadastrada com sucesso!', 'Formulário')
                     })
@@ -111,7 +111,7 @@ const mainContainer = {
                     })
             }
         },
-        removeTransaction(transation){
+        removeTransation(transation){
           const self = this
 
           axios.delete(baseUrl + transation.id)
