@@ -1,53 +1,90 @@
 package com.gm2.cryptoapp.repository;
 
+
 import com.gm2.cryptoapp.dto.MoedaTransationDTO;
 import com.gm2.cryptoapp.entity.Moeda;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @Repository
 @EnableAutoConfiguration
 public class MoedaRepository {
 
-    @Autowired
-    private EntityManager entityManager;
+    private static String INSERT = "insert into moeda (nome, preco, quantidade, datetime) values (?,?,?,?)";
 
-    @Transactional
+    private static String SELECT_ALL = "select nome, sum(quantidade) as quantidade from moeda group by nome";
+
+    private static String SELECT_BY_NAME = "select * from moeda where nome = ?";
+
+    private static String DELETE = "delete from moeda where id = ?";
+
+    private static String UPDATE = "update moeda set nome = ?, preco = ?, quantidade = ? where id = ?";
+
+    private JdbcTemplate jdbcTemplate;
+
+    public MoedaRepository(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
+
     public Moeda insert (Moeda moeda){
-        entityManager.persist(moeda);
+        Object[] atrr = new Object[] {
+                moeda.getNome(),
+                moeda.getPreco(),
+                moeda.getQuantidade(),
+                moeda.getDateTime()
+        };
+        jdbcTemplate.update(INSERT, atrr);
         return moeda;
     }
 
-    @Transactional
     public Moeda update(Moeda moeda){
-        entityManager.merge(moeda);
+        Object[] atrr = new Object[] {
+                moeda.getNome(),
+                moeda.getPreco(),
+                moeda.getQuantidade(),
+                moeda.getId()
+        };
+        jdbcTemplate.update(UPDATE, atrr);
         return moeda;
     }
+
     public List<MoedaTransationDTO> getAll(){
-        String jpql = "select new com.gm2.cryptoapp.dto.MoedaTransationDTO(m.nome,sum(m.quantidade)) from Moeda m group by m.nome";
-        TypedQuery<MoedaTransationDTO> query = entityManager.createQuery(jpql, MoedaTransationDTO.class);
-        return query.getResultList();
-    }
-        public List<Moeda> getByName( String nome){
-       String jpql = "select m from Moeda m where m.nome like :nome";
-       TypedQuery<Moeda> query =entityManager.createQuery(jpql, Moeda.class);
-       query.setParameter("nome","%"+ nome +"%");
-       return query.getResultList();
+        return jdbcTemplate.query(SELECT_ALL, new RowMapper<MoedaTransationDTO>() {
+            @Override
+            public MoedaTransationDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+                MoedaTransationDTO moeda = new MoedaTransationDTO();
+                moeda.setNome(rs.getString("nome"));
+                moeda.setQuantidade(rs.getBigDecimal("quantidade"));
+                return moeda;
+            }
+        });
     }
 
-    @Transactional
-    public boolean remove(int id){
-    Moeda moeda = entityManager.find(Moeda.class, id);
-    if(moeda == null)
-        throw new RuntimeException();
-    entityManager.remove(moeda);
-    return true;
+    public List<Moeda> getByName(String nome){
+        Object[] atrr = new Object[] { nome };
+        return jdbcTemplate.query(SELECT_BY_NAME, new RowMapper<Moeda>() {
+            @Override
+            public Moeda mapRow(ResultSet rs, int rowNum) throws SQLException {
 
+                Moeda moeda = new Moeda();
+                moeda.setId(rs.getInt("id"));
+                moeda.setNome(rs.getString("nome"));
+                moeda.setPreco(rs.getBigDecimal("preco"));
+                moeda.setQuantidade(rs.getBigDecimal("quantidade"));
+                moeda.setDateTime(rs.getTimestamp("datetime"));
+
+                return moeda;
+            }
+        }, atrr);
+    }
+
+    public int remove(int id){
+
+        return jdbcTemplate.update(DELETE, id);
     }
 }

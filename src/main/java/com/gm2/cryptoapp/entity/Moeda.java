@@ -9,17 +9,10 @@ import java.sql.Timestamp;
 public class Moeda {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
     private int id;
-    @Column(name = "NOME")
     private String nome;
-
-    @Column(name = "PRECO")
     private BigDecimal preco;
-    @Column(name = "QUANTIDADE")
     private BigDecimal quantidade;
-    @Column(name = "DATA")
     private Timestamp dateTime;
 
     public int getId() {
@@ -51,7 +44,7 @@ public class Moeda {
     }
 
     public void setQuantidade(BigDecimal quantidade) {
-        this.quantidade = quantidade;
+        this.quantidade= quantidade;
     }
 
     public Timestamp getDateTime() {
@@ -62,3 +55,4 @@ public class Moeda {
         this.dateTime = dateTime;
     }
 }
+

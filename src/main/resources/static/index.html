@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Carteira de Cryptomoedas</title>
+
+    <!-- bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- toast -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div id="app" class="container">
+        <div class="mt-3 text-center">
+            <h2>Carteira de Criptomoedas</h2>
+        </div>
+        <div class="card mt-3">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Quantidade</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="moeda in moedas">
+                            <td>{{ moeda.nome }}</td>
+                            <td>{{ moeda.quantidade }}</td>
+                            <td>
+                                <button class="btn btn-primary" @Click="showTransations(moeda.nome)" type="button">Transações</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex flex-row justify-content-between">
+            <div class="card mt-2" style="width: 38%">
+                <div class="card-body">
+                    <h3>{{ formMoeda.title }}</h3>
+                    <div class="form-group">
+                        <label>Nome da crypto</label>
+                        <input type="text" class="form-control" v-model="formMoeda.nome"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Preço</label>
+                        <input type="text" class="form-control" v-model="formMoeda.preco"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantidade</label>
+                        <input type="text" class="form-control" v-model="formMoeda.quantidade"/>
+                    </div>
+                    <button @click="saveMoeda" class="btn btn-primary mt-2" type="button">{{ formMoeda.button}}</button>
+                    <button @click="cleanForm" style="margin-left: 5px" class="btn btn-warning mt-2" type="button">Limpar</button>
+                </div>
+            </div>
+            <div v-if="canSeeTransations" class="card mt-2" style="width: 60%">
+                <div class="card-body">
+                    <h3>Transações - <span>{{ transations.moedaNome }}</span></h3>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Preço</th>
+                                <th>Quantidade</th>
+                                <th>Data da compra</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="transation in transations.data">
+                                <td>{{ transation.preco }}</td>
+                                <td>{{ transation.quantidade}}</td>
+                                <td>{{ transation.datetime }}</td>
+                                <td>
+                                    <button class="btn btn-primary" @Click="editTransation(transation)" type="button">Editar</button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" @Click="removeTransation(transation)" type="button">Excluir</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Precisa para o toast -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Para requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+
+    <script src="vueApp.js"></script>
+</body>
+</html>
