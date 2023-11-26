@@ -6,6 +6,11 @@ public class MoedaTransationDTO {
     private String nome;
     private BigDecimal quantidade;
 
+    public MoedaTransationDTO(String nome, BigDecimal quantidade){
+        this.nome = nome;
+        this.quantidade = quantidade;
+    }
+
     public String getNome() {
         return nome;
     }

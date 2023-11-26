@@ -1,13 +1,25 @@
 package com.gm2.cryptoapp.entity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+@Entity
+@Table (name = "moeda")
 public class Moeda {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private int id;
+    @Column(name = "NOME")
     private String nome;
+
+    @Column(name = "PRECO")
     private BigDecimal preco;
+    @Column(name = "QUANTIDADE")
     private BigDecimal quantidade;
+    @Column(name = "DATA")
     private Timestamp dateTime;
 
     public int getId() {
